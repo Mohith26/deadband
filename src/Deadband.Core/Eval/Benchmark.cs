@@ -102,8 +102,27 @@ public static class Benchmark
             return new { run = r.Name, fault = r.Fault, oee = Math.Round(full.Oee, 4), availability = Math.Round(full.Availability, 4), performance = Math.Round(full.Performance, 4), quality = Math.Round(full.Quality, 4), postOnsetOee = Math.Round(post.Oee, 4) };
         }).ToList();
 
+        var rawS = (ConfigSummary)summaries["raw"]!;
+        var ratS = (ConfigSummary)summaries["rationalized"]!;
+        var headline = new
+        {
+            rawAlarmsPer10Min = Math.Round(rawS.AlarmsPer10Min, 2),
+            rationalizedAlarmsPer10Min = Math.Round(ratS.AlarmsPer10Min, 2),
+            alarmRateReductionPct = Math.Round(100 * (1 - ratS.AlarmsPer10Min / rawS.AlarmsPer10Min), 1),
+            rawPeak10Min = rawS.Peak10Min, rationalizedPeak10Min = ratS.Peak10Min,
+            rawFloodWindowPct = Math.Round(100 * rawS.FloodWindowShare, 2), rationalizedFloodWindowPct = Math.Round(100 * ratS.FloodWindowShare, 2),
+            normalOperationHours = ratS.NormalHours,
+            rawNormalFalseAlarms = rawS.NormalAnnunciated, rationalizedNormalFalseAlarms = ratS.NormalAnnunciated,
+            falseAlarmReductionPct = Math.Round(100 * (1 - (double)ratS.NormalAnnunciated / rawS.NormalAnnunciated), 1),
+            faultRuns = ratS.FaultRuns,
+            rawDetectedWithin2h = rawS.DetectedWithin2h, rationalizedDetectedWithin2h = ratS.DetectedWithin2h,
+            rawMedianDelayWithin2hMin = rawS.MedianDelayWithin2hMin, rationalizedMedianDelayWithin2hMin = ratS.MedianDelayWithin2hMin,
+            limitsOnlyDetectedWithin2h = ((ConfigSummary)summaries["L1_limits"]!).DetectedWithin2h,
+        };
+
         return new Dictionary<string, object?>
         {
+            ["headline"] = headline,
             ["dataset"] = new
             {
                 name = "Tennessee Eastman Process (Downs and Vogel 1993), Braatz et al. closed-loop data",
