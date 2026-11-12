@@ -59,6 +59,14 @@ using (var scope = app.Services.CreateScope())
 app.Services.GetRequiredService<PlantRuntime>(); // fail fast on bad data/config paths
 
 app.UseCors();
+// Serve the built Angular HMI (web/dist/web/browser) from the same origin when it exists.
+var hmi = Path.GetFullPath(app.Configuration["Hmi:Dist"] ?? "web/dist/web/browser");
+if (Directory.Exists(hmi))
+{
+    var files = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(hmi);
+    app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = files });
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = files });
+}
 app.UseSwagger();
 app.UseSwaggerUI(o => o.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 app.MapControllers();
