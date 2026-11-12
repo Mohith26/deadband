@@ -58,7 +58,8 @@ public static class LoadTest
         var lt = root["loadtest"] as JsonObject ?? new JsonObject();
         lt[label] = res;
         root["loadtest"] = lt;
-        Directory.CreateDirectory(Path.GetDirectoryName(outPath)!);
+        var outDir = Path.GetDirectoryName(Path.GetFullPath(outPath));
+        if (!string.IsNullOrEmpty(outDir)) Directory.CreateDirectory(outDir);
         File.WriteAllText(outPath, root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         return all.Any(x => !x.ok) ? 1 : 0;
     }

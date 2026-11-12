@@ -67,7 +67,8 @@ switch (cmd)
             foreach (var (k, v) in prev) if (!result.ContainsKey(k)) result[k] = v;
         }
         result["evaluateSeconds"] = Math.Round(sw.Elapsed.TotalSeconds, 1);
-        Directory.CreateDirectory(Path.GetDirectoryName(outPath)!);
+        var outDir = Path.GetDirectoryName(Path.GetFullPath(outPath));
+        if (!string.IsNullOrEmpty(outDir)) Directory.CreateDirectory(outDir);
         File.WriteAllText(outPath, JsonSerializer.Serialize(result, json));
         Console.WriteLine($"wrote {outPath} in {sw.Elapsed.TotalSeconds:0.0}s");
         return 0;
