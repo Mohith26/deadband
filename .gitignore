@@ -1,0 +1,15 @@
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+data/tep-full/
+data/config-store/
+data/*.db
+data/*.db-*
+node_modules/
+web/.angular/
+web/dist/
+web/coverage/
+EXPLAINER.md
+bank-entry.json
